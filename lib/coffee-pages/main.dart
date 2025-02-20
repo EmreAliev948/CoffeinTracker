@@ -14,7 +14,6 @@ import '../helpers/extensions.dart';
 import 'beverage_selection_dialog.dart';
 import 'coffee_statistic.dart';
 import 'profile.dart';
-import 'settings.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -50,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final List<IconData> listOfIcons = [
     Icons.coffee_rounded,
     Icons.analytics_rounded,
-    Icons.settings_rounded,
     Icons.person_rounded,
   ];
 
@@ -60,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _pages.addAll([
       HomePage(key: _homePageKey),
       const CoffeeStatistic(intakes: []),
-      const Settings(),
       const Profile(),
     ]);
     _timer = Timer.periodic(const Duration(minutes: 1), (_) {
@@ -163,46 +160,46 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ],
               borderRadius: BorderRadius.circular(50),
             ),
-            child: ListView.builder(
-              itemCount: 4,
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: size.width * .024),
-              itemBuilder: (context, index) => InkWell(
-                onTap: () {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 1500),
-                      curve: Curves.fastLinearToSlowEaseIn,
-                      margin: EdgeInsets.only(
-                        bottom: index == currentIndex ? 0 : size.width * .029,
-                        right: size.width * .0422,
-                        left: size.width * .0422,
-                      ),
-                      width: size.width * .128,
-                      height: index == currentIndex ? size.width * .014 : 0,
-                      decoration: BoxDecoration(
-                        color: Colors.brown,
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(
+                3,
+                (index) => InkWell(
+                  onTap: () {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 1500),
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        margin: EdgeInsets.only(
+                          bottom: index == currentIndex ? 0 : size.width * .029,
+                        ),
+                        width: size.width * .128,
+                        height: index == currentIndex ? size.width * .014 : 0,
+                        decoration: BoxDecoration(
+                          color: Colors.brown,
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(10),
+                          ),
                         ),
                       ),
-                    ),
-                    Icon(
-                      listOfIcons[index],
-                      size: size.width * .076,
-                      color:
-                          index == currentIndex ? Colors.brown : Colors.black38,
-                    ),
-                    SizedBox(height: size.width * .03),
-                  ],
+                      Icon(
+                        listOfIcons[index],
+                        size: size.width * .076,
+                        color: index == currentIndex
+                            ? Colors.brown
+                            : Colors.black38,
+                      ),
+                      SizedBox(height: size.width * .03),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -227,6 +224,12 @@ class _HomePageState extends State<HomePage> {
   double _selectedSize = 250;
   final TextEditingController _sizeController =
       TextEditingController(text: '250');
+
+  List<CoffeeIntake> get _last24HourIntakes {
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(hours: 24));
+    return _intakes.where((intake) => intake.time.isAfter(yesterday)).toList();
+  }
 
   @override
   void initState() {
@@ -298,15 +301,17 @@ class _HomePageState extends State<HomePage> {
       },
       builder: (context, state) {
         final currentCaffeineLevel =
-            CaffeineCalculator.getCurrentCaffeineLevel(_intakes);
+            CaffeineCalculator.getCurrentCaffeineLevel(_last24HourIntakes);
         final effectiveLevel =
-            CaffeineCalculator.getEffectiveCaffeineLevel(_intakes);
-        final peakStatus = CaffeineCalculator.getPeakEffectStatus(_intakes);
-        final isFrequent = CaffeineCalculator.isFrequentConsumption(_intakes);
+            CaffeineCalculator.getEffectiveCaffeineLevel(_last24HourIntakes);
+        final peakStatus =
+            CaffeineCalculator.getPeakEffectStatus(_last24HourIntakes);
+        final isFrequent =
+            CaffeineCalculator.isFrequentConsumption(_last24HourIntakes);
 
         double halfLifeProgress = 0;
-        if (_intakes.isNotEmpty) {
-          final mostRecent = _intakes.last;
+        if (_last24HourIntakes.isNotEmpty) {
+          final mostRecent = _last24HourIntakes.last;
           final timePassed = DateTime.now().difference(mostRecent.time);
           halfLifeProgress = (timePassed.inMinutes %
                   (CaffeineCalculator.HALF_LIFE_HOURS * 60)) /
@@ -442,9 +447,9 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(8),
-                itemCount: _intakes.length,
+                itemCount: _last24HourIntakes.length,
                 itemBuilder: (context, index) {
-                  final intake = _intakes[index];
+                  final intake = _last24HourIntakes[index];
                   return Dismissible(
                     key: Key('intake_${intake.databaseData?['intake_id']}'),
                     background: Container(
