@@ -11,6 +11,7 @@ import '../../logic/cubit/auth_cubit.dart';
 import 'app_text_button.dart';
 import 'app_text_form_field.dart';
 import 'password_validations.dart';
+import 'gif_player_widget.dart';
 
 // ignore: must_be_immutable
 class EmailAndPassword extends StatefulWidget {
@@ -67,7 +68,9 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height / 5,
-            child: Image.asset('assets/animation/icon.PNG'),
+            child: const GifPlayerWidget(
+              gifAssetPath: 'assets/animation/animation-coffee-unscreen.gif',
+            ),
           ),
           if (widget.isSignUpPage ?? false) nameField(),
           emailField(),
