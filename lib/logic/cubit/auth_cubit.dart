@@ -13,21 +13,15 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> _verifyDatabaseSetup() async {
     try {
-      // Check users table
-      final users = await supabase.from('users').select();
-
-      // Check settings table
-      final settings = await supabase.from('settings').select();
-
-      // Check beverage_types table
-      final beverageTypes = await supabase.from('beverage_types').select();
-
-      // Check intakes table
-      final intakes = await supabase.from('intakes').select();
+      // Check tables exist by attempting to query them
+      await supabase.from('users').select();
+      await supabase.from('settings').select();
+      await supabase.from('beverage_types').select();
+      await supabase.from('intakes').select();
 
       // Initialize beverage types if needed
       await _initializeBeverageTypes();
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Error handled silently
     }
   }
@@ -78,7 +72,7 @@ class AuthCubit extends Cubit<AuthState> {
 
         await supabase.from('beverage_types').insert(defaultBeverages).select();
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Error handled silently
     }
   }
@@ -119,7 +113,7 @@ class AuthCubit extends Cubit<AuthState> {
         'daily_limit': 400.00,
         'notifications': true,
       });
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Error handled silently
     }
   }
@@ -256,7 +250,7 @@ class AuthCubit extends Cubit<AuthState> {
           .single();
 
       return response['user_id'] as int;
-    } catch (e, stackTrace) {
+    } catch (e) {
       return null;
     }
   }
@@ -289,11 +283,11 @@ class AuthCubit extends Cubit<AuthState> {
         'timestamp': DateTime.now().toIso8601String(),
       };
 
-      final response =
-          await supabase.from('intakes').insert(intakeData).select().single();
+      // Insert the intake data without storing the response
+      await supabase.from('intakes').insert(intakeData).select().single();
 
       emit(IntakeAdded());
-    } catch (e, stackTrace) {
+    } catch (e) {
       emit(AuthError('Failed to add intake: ${e.toString()}'));
     }
   }
@@ -315,7 +309,7 @@ class AuthCubit extends Cubit<AuthState> {
           .order('timestamp', ascending: false);
 
       emit(IntakesLoaded(List<Map<String, dynamic>>.from(response)));
-    } catch (e, stackTrace) {
+    } catch (e) {
       emit(AuthError('Failed to load intakes: ${e.toString()}'));
     }
   }
@@ -431,7 +425,7 @@ class AuthCubit extends Cubit<AuthState> {
           .eq('user_id', userId);
 
       emit(IntakeDeleted(intakeId));
-    } catch (e, stackTrace) {
+    } catch (e) {
       emit(AuthError('Failed to delete intake: ${e.toString()}'));
     }
   }

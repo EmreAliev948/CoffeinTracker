@@ -13,9 +13,6 @@ class GifPlayerWidget extends StatefulWidget {
 }
 
 class _GifPlayerWidgetState extends State<GifPlayerWidget> {
-  bool _hasError = false;
-  bool _isLoading = true;
-
   @override
   Widget build(BuildContext context) {
     return Image.asset(
