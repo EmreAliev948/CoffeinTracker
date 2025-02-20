@@ -56,7 +56,7 @@ A Flutter application for tracking your daily caffeine intake and monitoring con
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
-
+- Login and signup screens adapted from Moaz Sayed's Flutter authentication implementation (https://github.com/MoazSayed7/Flutter-Bloc_Cubit-Animated-Auth-Screens-Firebase-Login-SignUp-Reset-SignWithGoogle)
 - Flutter team for the amazing framework
 ## Contact
 

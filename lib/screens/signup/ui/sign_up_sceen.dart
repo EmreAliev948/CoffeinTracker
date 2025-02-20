@@ -11,7 +11,6 @@ import '../../../core/widgets/progress_indicaror.dart';
 import '../../../core/widgets/sign_in_with_google_text.dart';
 import '../../../core/widgets/terms_and_conditions_text.dart';
 import '../../../helpers/extensions.dart';
-import '../../../helpers/rive_controller.dart';
 import '../../../logic/cubit/auth_cubit.dart';
 import '../../../routing/routes.dart';
 import '../../../theming/styles.dart';
@@ -24,9 +23,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final RiveAnimationControllerHelper riveHelper =
-      RiveAnimationControllerHelper();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,8 +51,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (state is AuthLoading) {
                       ProgressIndicaror.showProgressIndicator(context);
                     } else if (state is AuthError) {
-                      riveHelper.addFailController();
-
                       context.pop();
                       await AwesomeDialog(
                         context: context,
@@ -66,9 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         desc: state.message,
                       ).show();
                     } else if (state is UserSignIn) {
-                      riveHelper.addSuccessController();
                       await Future.delayed(const Duration(seconds: 2));
-                      riveHelper.dispose();
                       if (!context.mounted) return;
                       context.pushNamedAndRemoveUntil(
                         Routes.homeScreen,
@@ -86,7 +78,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
                     } else if (state is UserSingupButNotVerified) {
                       context.pop();
-                      riveHelper.addSuccessController();
                       await AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
@@ -95,7 +86,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         desc: 'Don\'t forget to verify your email check inbox.',
                       ).show();
                       await Future.delayed(const Duration(seconds: 2));
-                      riveHelper.removeAllControllers();
                       if (!context.mounted) return;
                       context.pushNamedAndRemoveUntil(
                         Routes.loginScreen,

@@ -12,7 +12,6 @@ import '../../../core/widgets/progress_indicaror.dart';
 import '../../../core/widgets/sign_in_with_google_text.dart';
 import '../../../core/widgets/terms_and_conditions_text.dart';
 import '../../../helpers/extensions.dart';
-import '../../../helpers/rive_controller.dart';
 import '../../../logic/cubit/auth_cubit.dart';
 import '../../../routing/routes.dart';
 import '../../../theming/colors.dart';
@@ -27,8 +26,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final RiveAnimationControllerHelper riveHelper =
-      RiveAnimationControllerHelper();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ProgressIndicaror.showProgressIndicator(context);
               } else if (state is AuthError) {
                 context.pop();
-                riveHelper.addFailController();
                 AwesomeDialog(
                   context: context,
                   dialogType: DialogType.error,
@@ -79,16 +75,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   desc: state.message,
                 ).show();
               } else if (state is UserSignIn) {
-                riveHelper.addSuccessController();
                 await Future.delayed(const Duration(seconds: 2));
-                riveHelper.dispose();
                 if (!context.mounted) return;
                 context.pushNamedAndRemoveUntil(
                   Routes.homeScreen,
                   predicate: (route) => false,
                 );
               } else if (state is UserNotVerified) {
-                riveHelper.addFailController();
                 AwesomeDialog(
                   context: context,
                   dialogType: DialogType.info,

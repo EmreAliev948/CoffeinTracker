@@ -7,7 +7,6 @@ import '../../../helpers/app_regex.dart';
 import '../../../routing/routes.dart';
 import '../../../theming/styles.dart';
 import '../../helpers/extensions.dart';
-import '../../helpers/rive_controller.dart';
 import '../../logic/cubit/auth_cubit.dart';
 import 'app_text_button.dart';
 import 'app_text_form_field.dart';
@@ -46,9 +45,6 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
 
   final formKey = GlobalKey<FormState>();
 
-  final RiveAnimationControllerHelper riveHelper =
-      RiveAnimationControllerHelper();
-
   final passwordFocuseNode = FocusNode();
   final passwordConfirmationFocuseNode = FocusNode();
 
@@ -71,8 +67,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height / 5,
-            child: riveHelper.currentWidget ??
-                Image.asset('assets/animation/icon.PNG'),
+            child: Image.asset('assets/animation/icon.PNG'),
           ),
           if (widget.isSignUpPage ?? false) nameField(),
           emailField(),
@@ -89,26 +84,6 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
         ],
       ),
     );
-  }
-
-  void checkForPasswordConfirmationFocused() {
-    passwordConfirmationFocuseNode.addListener(() {
-      if (passwordConfirmationFocuseNode.hasFocus && isObscureText) {
-        riveHelper.addHandsUpController();
-      } else if (!passwordConfirmationFocuseNode.hasFocus && isObscureText) {
-        riveHelper.addHandsDownController();
-      }
-    });
-  }
-
-  void checkForPasswordFocused() {
-    passwordFocuseNode.addListener(() {
-      if (passwordFocuseNode.hasFocus && isObscureText) {
-        riveHelper.addHandsUpController();
-      } else if (!passwordFocuseNode.hasFocus && isObscureText) {
-        riveHelper.addHandsDownController();
-      }
-    });
   }
 
   @override
@@ -228,13 +203,6 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
           setState(() {
             isObscureText = !isObscureText;
           });
-          if (passwordFocuseNode.hasFocus) {
-            if (isObscureText) {
-              riveHelper.addHandsUpController();
-            } else {
-              riveHelper.addHandsDownController();
-            }
-          }
         },
       ),
       focusNode: passwordFocuseNode,
