@@ -19,13 +19,13 @@ A Flutter application for tracking your daily caffeine intake and monitoring con
 - Sign in with Google through Google OAuth - Supabase Auth
 - Store data in Supabase
 - Track various caffeinated beverages
-- View daily, weekly, and monthly caffeine consumption statistics // TODO
+- View daily, weekly, and monthly caffeine consumption statistics
 - Track peak caffeine levels
 - Personalized profile with caffeine sensitivity settings // TODO
 - Customizable drink presets // TODO
 - Visual consumption graphs and analytics // TODO
-- Daily intake recommendations
-- Reminder notifications // TODO
+- Daily intake recommendations // TODO
+- Notifications when reaching peak caffeine levels in the body
 
 ## Getting Started
 
