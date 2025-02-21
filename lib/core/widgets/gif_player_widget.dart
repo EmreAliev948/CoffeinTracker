@@ -4,9 +4,9 @@ class GifPlayerWidget extends StatefulWidget {
   final String gifAssetPath;
 
   const GifPlayerWidget({
-    Key? key,
+    super.key,
     required this.gifAssetPath,
-  }) : super(key: key);
+  });
 
   @override
   State<GifPlayerWidget> createState() => _GifPlayerWidgetState();
@@ -21,15 +21,15 @@ class _GifPlayerWidgetState extends State<GifPlayerWidget> {
       errorBuilder: (context, error, stackTrace) {
         return Container(
           color: Colors.transparent,
-          child: Center(
+          child: const Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 30),
-                const SizedBox(height: 8),
+                Icon(Icons.error_outline, color: Colors.red, size: 30),
+                SizedBox(height: 8),
                 Text(
                   'Error loading GIF',
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
               ],

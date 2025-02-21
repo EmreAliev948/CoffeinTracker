@@ -18,7 +18,7 @@ class CreatePassword extends StatelessWidget {
   final String? displayName;
   final String? photoUrl;
 
-  CreatePassword({
+  const CreatePassword({
     super.key,
     required this.email,
     this.displayName,

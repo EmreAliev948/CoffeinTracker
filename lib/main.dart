@@ -6,6 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'routing/app_router.dart';
 import 'routing/routes.dart';
 import 'theming/colors.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'logic/cubit/noti_service.dart';
 
 late String initialRoute;
 
@@ -13,11 +15,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
+  tz.initializeTimeZones(); // Initialize timezones for notifications
 
   await Supabase.initialize(
     url: dotenv.env['url']!,
     anonKey: dotenv.env['key']!,
   );
+
+  final notiService = NotiService();
+  await notiService.initNotification();
 
   final session = Supabase.instance.client.auth.currentSession;
   initialRoute = session != null ? Routes.homeScreen : Routes.loginScreen;

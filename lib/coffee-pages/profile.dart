@@ -125,9 +125,9 @@ class _ProfileState extends State<Profile> {
             _buildSettingSection(
               title: 'About',
               children: [
-                ListTile(
-                  title: const Text('Version'),
-                  trailing: const Text('1.0.0'),
+                const ListTile(
+                  title: Text('Version'),
+                  trailing: Text('1.0.0'),
                 ),
               ],
             ),

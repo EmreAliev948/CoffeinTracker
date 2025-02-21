@@ -14,6 +14,8 @@ import '../helpers/extensions.dart';
 import 'beverage_selection_dialog.dart';
 import 'coffee_statistic.dart';
 import 'profile.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import '../logic/cubit/noti_service.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -127,12 +129,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           body: _pages[currentIndex],
           floatingActionButton: currentIndex == 0
               ? FloatingActionButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final homePageState = _homePageKey.currentState;
                     if (homePageState != null) {
                       final warningLevel =
                           homePageState._calculateWarningLevel();
-                      context.read<AuthCubit>().addBeverageIntake(
+
+                      // Create the new intake
+                      final newIntake = CoffeeIntake(
+                        DateTime.now(),
+                        homePageState._selectedBeverage,
+                        homePageState._selectedSize,
+                      );
+
+                      // Add new intake to current list for immediate notification
+                      final updatedIntakes = [...currentIntakes, newIntake];
+
+                      // Schedule notification with updated list
+                      final notiService = NotiService();
+                      await notiService.schedulePeakCaffeineNotification(
+                        intakes: updatedIntakes,
+                      );
+
+                      // Save to database
+                      await context.read<AuthCubit>().addBeverageIntake(
                             beverageType: homePageState._selectedBeverage.name,
                             caffeineContentPer250ml: homePageState
                                 ._selectedBeverage.caffeineContentPer250ml,
@@ -183,9 +203,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ),
                         width: size.width * .128,
                         height: index == currentIndex ? size.width * .014 : 0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.brown,
-                          borderRadius: const BorderRadius.vertical(
+                          borderRadius: BorderRadius.vertical(
                             bottom: Radius.circular(10),
                           ),
                         ),
@@ -540,4 +560,14 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+
+  final notiService = NotiService();
+  await notiService.initNotification();
+
+  runApp(const MyApp());
 }
